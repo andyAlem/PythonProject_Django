@@ -8,6 +8,7 @@ authors = ["Andrej <andrej@mail.com>"]
 python = "^3.10"
 django = "^5.2"
 python-dotenv = "^1.1.0"
+psycopg2-binary = "^2.9.10"
 
 [tool.poetry.dev-dependencies]
 
