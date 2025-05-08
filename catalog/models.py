@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 class Category(models.Model):
@@ -55,14 +56,19 @@ class Product(models.Model):
     created_at = models.DateField(
         verbose_name="Дата последнего изменения",
         help_text="Дата создания",
+        auto_now_add=True,
     )
     updated_at = models.DateField(
         verbose_name="Дата последнего изменения",
         help_text="Дата изменения",
+        auto_now=True,
     )
 
-    def __str__(self):
-        return self.name
+    view_counter = models.PositiveIntegerField(
+        verbose_name="Счетчик просмотров",
+        help_text="Укажите количество просмотров",
+        default=0,
+    )
 
     class Meta:
         verbose_name = "Продукт"
