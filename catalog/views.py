@@ -8,6 +8,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from catalog.forms import ProductForm
 from catalog.models import Product
 
 
@@ -43,7 +44,7 @@ class ProductCreateView(CreateView):
     """
 
     model = Product
-    fields = ("name", "description", "image", "category", "price")
+    form_class = ProductForm
     success_url = reverse_lazy("catalog:products_list")
 
 
@@ -53,7 +54,7 @@ class ProductUpdateView(UpdateView):
     """
 
     model = Product
-    fields = ("name", "description", "image", "category", "price")
+    form_class = ProductForm
     success_url = reverse_lazy("catalog:products_list")
 
     def get_success_url(self):
