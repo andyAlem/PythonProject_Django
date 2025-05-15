@@ -1,12 +1,7 @@
-from django.urls import reverse_lazy, reverse
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    TemplateView,
-    UpdateView,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView)
 
 from catalog.forms import ProductForm
 from catalog.models import Product
@@ -24,12 +19,13 @@ class CatalogListView(ListView):
     model = Product
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     """
     Класс отображения подробной информации о продукте.
     """
 
     model = Product
+    login_url = reverse_lazy("users:login")
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
@@ -38,7 +34,7 @@ class ProductDetailView(DetailView):
         return self.object
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     """
     Класс добавления информации о продукте.
     """
@@ -46,9 +42,10 @@ class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("catalog:products_list")
+    login_url = reverse_lazy("users:login")
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """
     Класс обновления информации о продукте.
     """
@@ -56,12 +53,13 @@ class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("catalog:products_list")
+    login_url = reverse_lazy("users:login")
 
     def get_success_url(self):
         return reverse("catalog:products_detail", args=[self.kwargs.get("pk")])
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     """
     Класс удаления информации о продукте.
     """
@@ -69,3 +67,4 @@ class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy("catalog:products_list")
     template_name = "catalog/product_delete.html"
+    login_url = reverse_lazy("users:login")
