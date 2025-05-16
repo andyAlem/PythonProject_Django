@@ -1,5 +1,8 @@
-from django.db import models
 from datetime import date
+
+from django.db import models
+
+from users.models import User
 
 
 class Category(models.Model):
@@ -70,7 +73,23 @@ class Product(models.Model):
         default=0,
     )
 
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name="Опубликовано",
+        help_text="Опубликовать продукт",
+    )
+
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        verbose_name="Создатель",
+        related_name="user",
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ["name", "price", "created_at", "updated_at"]
+        permissions = [("can_unpublish_product", "Может отменить публикацию продукта")]
