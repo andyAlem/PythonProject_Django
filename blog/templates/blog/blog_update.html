@@ -1,0 +1,12 @@
+{% extends "catalog/base.html" %}
+
+{% block content %}
+<h1>Редактировать статью: {{ object.title }}</h1>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">🔄 Обновить</button>
+  <a href="{% url 'blog:blog_detail' object.pk %}" class="btn btn-secondary">← Отмена</a>
+</form>
+{% endblock %}
