@@ -15,8 +15,8 @@ urlpatterns = [
         ProductsByCategoryView.as_view(),
         name="products_by_category",
     ),
-    path("contacts/", cache_page(60)(Contacts.as_view()), name="contacts"),
-    path("products/<int:pk>/", ProductDetailView.as_view(), name="products_detail"),
+    path("contacts/", Contacts.as_view(), name="contacts"),
+    path("products/<int:pk>/", cache_page(60)(ProductDetailView.as_view()), name="products_detail"),
     path("catalog/create/", ProductCreateView.as_view(), name="products_create"),
     path(
         "catalog/<int:pk>/update/", ProductUpdateView.as_view(), name="products_update"
