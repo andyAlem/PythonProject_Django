@@ -1,17 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    TemplateView,
-    UpdateView,
-)
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView)
 
 from catalog.forms import CatalogModeratorForm, ProductForm
-from catalog.models import Product
+from catalog.models import Category, Product
+from catalog.services import get_products_by_category, get_products_from_cache
 
 
 class Contacts(TemplateView):
@@ -25,11 +20,13 @@ class CatalogListView(ListView):
 
     model = Product
 
+    def get_queryset(self):
+        """Возвращает список продуктов с учетом кэширования."""
+        return get_products_from_cache()
+
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
-    """
-    Класс отображения подробной информации о продукте.
-    """
+    """Класс отображения подробной информации о продукте."""
 
     model = Product
     login_url = reverse_lazy("users:login")
@@ -68,7 +65,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        # Можно проверку оставить, если нужно
         return obj
 
     def get_form_class(self):
@@ -96,3 +92,21 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         if obj.owner != user and not user.has_perm("catalog.can_unpublish_product"):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+class ProductsByCategoryView(ListView):
+    """Класс отображения продуктов по категории."""
+
+    model = Product
+    template_name = "catalog/products_by_category.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category_id = self.kwargs.get("pk")
+        return get_products_by_category(category_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs.get("pk")
+        context["category"] = Category.objects.get(pk=category_id)
+        return context

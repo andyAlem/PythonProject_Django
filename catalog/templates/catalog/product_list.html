@@ -21,6 +21,12 @@
                 </div>
                 <small class="text-body-secondary"></small>
               </div>
+              {% if product.category %}
+              <a class="btn btn-outline-secondary btn-sm mt-2"
+              href="{% url 'catalog:products_by_category' product.category.pk %}">
+              Все товары из категории "{{ product.category.name }}"
+              </a>
+              {% endif %}
             </div>
           </div>
         </div>
